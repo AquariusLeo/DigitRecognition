@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh">
+    <head>
+
+        <meta charset="utf-8">
+        <title>数字手写识别 —— By Zhangle</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+        <link rel="stylesheet" href="{{static_url('css/style.css')}}">
+        <link rel="icon" href="{{static_url('res/icon-dog.png')}}" sizes="32x32"/>
+
+    </head>
+
+    <body>
+    
+        <div id="mnist-pad">
+
+            <div class="mnist-pad-body" id="pad_body">
+                <canvas id="canvas"></canvas>
+            </div>
+                
+            <div class="mnist-pad-footer">
+                <div class="mnist-pad-result">
+                    <h5>识别结果：</h5>
+                    <h5 id="mnist-pad-result"></h5>
+                </div>  
+                <div class="mnist-pad-actions">
+                    <button type="button" id="mnist-pad-clear">清除</button>
+                    <button type="button" id="mnist-pad-submit">识别</button>
+                </div>
+            </div>
+
+        </div>
+
+        <canvas id="tempCanvas"></canvas>
+        
+        <script src="{{static_url('js/index.js')}}"></script>
+
+    </body>
+
+</html>
