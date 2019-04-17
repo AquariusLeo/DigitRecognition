@@ -1,4 +1,7 @@
 # DigitRecognition
+
+手写数字识别——基于TensorFlow LeNet-5模型
+
 ***
 ## 功能描述
 
