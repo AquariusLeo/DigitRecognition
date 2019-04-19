@@ -51,8 +51,15 @@ def train(mnist):
     train_op = tf.group(train_step, variable_average_ops)
     saver = tf.train.Saver()
     with tf.Session() as sess:
-        tf.global_variables_initializer().run()
-        for i in range(TRAIN_STEP):
+        model_file=tf.train.latest_checkpoint(MODEL_PATH)
+        if model_file==None:
+            i=0
+            tf.global_variables_initializer().run()
+        else:
+            strlist=model_file.split('-')
+            i=int(strlist[1])
+            saver.restore(sess,model_file)
+        while i<TRAIN_STEP:
             # 由于神经网络的输入大小为[BATCH_SIZE,IMAGE_SIZE,IMAGE_SIZE,CHANNEL]，因此需要reshape输入。
             xs,ys = mnist.train.next_batch(BATCH_SIZE)
             reshape_xs = np.reshape(xs,(BATCH_SIZE, mnist_interence.IMAGE_SIZE,
@@ -63,6 +70,7 @@ def train(mnist):
             if i % 1000 == 0:
                 print('After %d step, loss on train is %g,and learn rate is %g'%(step,loss_value,learn_rate))
                 saver.save(sess,os.path.join(MODEL_PATH,MODEL_NAME),global_step=global_step)
+            i+=1
 
 def main():
     mnist = input_data.read_data_sets('./mni_data', one_hot=True)
