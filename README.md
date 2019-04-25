@@ -26,6 +26,8 @@ Internet Explorer 9、Firefox、Opera、Chrome 以及 Safari 浏览器
 Windows：按下win+r，输入`cmd`，回车，进入cmd命令行界面。输入`cd /d 你的代码存储目录`，进入代码存储目录，输入`python server.py`运行后端服务器  
 ![](https://ws1.sinaimg.cn/large/8d421749ly1g264u89wubj20di06gdfz.jpg)
 
+训练模型：按下win+r，输入`cmd`，回车，进入cmd命令行界面。输入`cd /d 你的代码存储目录`，进入代码存储目录，输入`python mnist_train.py`进行模型训练。模型训练共需30万步，训练过程中可结束程序，下次再运行此程序将接着之前的步数继续训练。（源码中已给出训练好的模型，保存在model文件夹，无需训练）
+
 *前端*  
 在浏览器地址栏输入`服务器IP:8100`，回车即可进入网页。在方框内用手指或用鼠标书写一个0~9的数字，点击识别，稍等即可获得识别结果
 
@@ -75,7 +77,7 @@ Windows：按下win+r，输入`cmd`，回车，进入cmd命令行界面。输入
 　　│　　index.js  
 　　│      
 　　└─res  
-　　　　icon-dog.png  
+　　　　 icon-dog.png  
             
 ## 作者列表
 
@@ -85,6 +87,9 @@ Windows：按下win+r，输入`cmd`，回车，进入cmd命令行界面。输入
 
 - **1.0    2019年4月18日**  
   初始版本，仅实现移动端
+
+- **1.1    2019年4月19日**  
+  增加了模型训练过程中的保存与恢复功能
   
 ## 联系方式
 

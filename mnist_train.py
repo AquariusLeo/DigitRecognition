@@ -51,7 +51,7 @@ def train(mnist):
     train_op = tf.group(train_step, variable_average_ops)
     saver = tf.train.Saver()
     with tf.Session() as sess:
-        model_file=tf.train.latest_checkpoint(MODEL_PATH)
+        model_file=tf.train.latest_checkpoint(os.path.join(os.path.dirname(__file__), MODEL_PATH))
         if model_file==None:
             i=0
             tf.global_variables_initializer().run()
@@ -69,11 +69,11 @@ def train(mnist):
             _,loss_value,step,learn_rate = sess.run([train_op,loss,global_step,learning_rate],feed_dict={x:reshape_xs,y_:ys})
             if i % 1000 == 0:
                 print('After %d step, loss on train is %g,and learn rate is %g'%(step,loss_value,learn_rate))
-                saver.save(sess,os.path.join(MODEL_PATH,MODEL_NAME),global_step=global_step)
+                saver.save(sess,os.path.join(os.path.dirname(__file__), MODEL_PATH, MODEL_NAME),global_step=global_step)
             i+=1
 
 def main():
-    mnist = input_data.read_data_sets('./mni_data', one_hot=True)
+    mnist = input_data.read_data_sets(os.path.join(os.path.dirname(__file__), 'mni_data'), one_hot=True)
     # ys = mnist.validation.labels
     # print(ys)
     train(mnist)

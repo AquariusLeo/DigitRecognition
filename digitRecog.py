@@ -1,3 +1,4 @@
+import os
 import tensorflow as tf
 import numpy as np
 # 加载mnist_cnn.py和mnist_train.py中定义的常量和前向传播的函数
@@ -23,7 +24,7 @@ def digit_recog():
 
     with tf.Session() as sess:
         # tf.train.get_checkpoint_state函数会通过checkpoint文件自动找到目录中最新模型的文件名
-        ckpt = tf.train.get_checkpoint_state(mnist_train.MODEL_PATH)
+        ckpt = tf.train.get_checkpoint_state(os.path.join(os.path.dirname(__file__), mnist_train.MODEL_PATH))
         if ckpt and ckpt.model_checkpoint_path:
             # 加载模型
             saver.restore(sess, ckpt.model_checkpoint_path)
