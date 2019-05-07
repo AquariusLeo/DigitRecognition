@@ -19,6 +19,7 @@ var curpointY=0;
 var paddingNum=40;  //截取轨迹时的内边距
 var rect=canvas.getBoundingClientRect();   //使用此对象可获得canvas到视窗边框的距离
 
+//########################窗口加载完成时执行的操作##########################
 window.onload=function(){
     bt_submit.disabled=true;
     //===================建立websocket连接===============
@@ -37,44 +38,14 @@ window.onload=function(){
         alert("服务器连接已断开，请检查服务器！");
     }
     //=====================画布监听事件===================
-    canvas.addEventListener('touchstart',function(event){
-        if (event.targetTouches.length==1){
-            var touch=event.targetTouches[0];
-            prepointX=touch.clientX - rect.left;
-            prepointY=touch.clientY - rect.top;
-            ctx.beginPath();
-            ctx.lineWidth=linewid;
-            ctx.lineCap="round";
-            //手指移动
-            canvas.addEventListener('touchmove',function(event){
-                event.preventDefault();
-                movetime++;
-                var touche=event.targetTouches[0];
-                //当手指第一次移动时，prepoint不需要改变
-                if (movetime>1){
-                    prepointX=curpointX;
-                    prepointY=curpointY;
-                }
-                curpointX=touche.clientX - rect.left;
-                curpointY=touche.clientY - rect.top;
-                var midpointX=(prepointX + curpointX) / 2.0;
-                var midpointY=(prepointY + curpointY) / 2.0;
-                //当手指第一次移动时，画笔移动到起始点
-                if (movetime==1){
-                    ctx.moveTo(midpointX,midpointY);
-                }
-                //以后的每次移动，以前一个触摸点为控制点、中点为终点，绘制二次贝塞尔曲线
-                else{
-                    ctx.quadraticCurveTo(prepointX,prepointY,midpointX,midpointY);
-                    ctx.stroke();
-                }
-            },false);
-            canvas.addEventListener('touchend',function(event){
-                //触摸结束时，把movetime计数器清零
-                movetime=0;
-            },false);
-        }
-    },false);
+    if (isMobile()){
+        //移动端
+        canvas.addEventListener('touchstart', mbtouchstart, false);
+    }
+    else{
+        //PC端
+        canvas.addEventListener('mousedown',pcmousedown,false);
+    }
 
     //================清除按钮监听事件=====================
     bt_clear.addEventListener('click',function(event){
@@ -149,16 +120,132 @@ window.onload=function(){
     });
 }
 
-//画板尺寸自适应
-function getViewPort(){
-    var viewHeight=window.innerHeight || document.documentElement.clientHeight;
-    var viewWidth=window.innerWidth || document.documentElement.clientWidth;
-    document.body.style.width=viewWidth;
-    canvas.width=viewWidth-34;
-    canvas.height=viewHeight-101;
+//########################Javascript内部函数##########################
+
+//===========移动端监听事件函数============
+function mbtouchstart(event){
+    if (event.targetTouches.length==1){
+        var touch=event.targetTouches[0];
+        prepointX=touch.clientX - rect.left;    //touch.clientX为触摸点到视窗边框的距离
+        prepointY=touch.clientY - rect.top;
+        ctx.beginPath();
+        ctx.lineWidth=linewid;
+        ctx.lineCap="round";
+        //手指移动
+        canvas.addEventListener('touchmove',mbtouchmove,false);
+        canvas.addEventListener('touchend',mbtouchend,false);
+    }
+}
+function mbtouchmove(event){
+    event.preventDefault();
+    movetime++;
+    var touche=event.targetTouches[0];
+    //当手指第一次移动时，prepoint不需要改变
+    if (movetime>1){
+        prepointX=curpointX;
+        prepointY=curpointY;
+    }
+    curpointX=touche.clientX - rect.left;
+    curpointY=touche.clientY - rect.top;
+    //计算中点
+    var midpointX=(prepointX + curpointX) / 2.0;
+    var midpointY=(prepointY + curpointY) / 2.0;
+    //当手指第一次移动时，画笔移动到起始点
+    if (movetime==1){
+        ctx.moveTo(midpointX,midpointY);
+    }
+    //以后的每次移动，以前一个触摸点为控制点、中点为终点，绘制二次贝塞尔曲线
+    else{
+        ctx.quadraticCurveTo(prepointX,prepointY,midpointX,midpointY);
+        ctx.stroke();
+    }
+}
+function mbtouchend(event){
+    //触摸结束时，把movetime计数器清零
+    movetime=0;
 }
 
-//Image对象缩放
+//============PC端监听事件函数=============
+function pcmousedown(event){
+    prepointX=event.clientX - rect.left;
+    prepointY=event.clientY - rect.top;
+    ctx.beginPath();
+    ctx.lineWidth=linewid;
+    ctx.lineCap="round";
+    //手指移动
+    canvas.addEventListener('mousemove',pcmousemove,false);
+    canvas.addEventListener('mouseup',pcmouseup,false);
+}
+function pcmousemove(event){
+    event.preventDefault();
+    movetime++;
+    //当手指第一次移动时，prepoint不需要改变
+    if (movetime>1){
+        prepointX=curpointX;
+        prepointY=curpointY;
+    }
+    curpointX=event.clientX - rect.left;
+    curpointY=event.clientY - rect.top;
+    //计算中点
+    var midpointX=(prepointX + curpointX) / 2.0;
+    var midpointY=(prepointY + curpointY) / 2.0;
+    //当手指第一次移动时，画笔移动到起始点
+    if (movetime==1){
+        ctx.moveTo(midpointX,midpointY);
+    }
+    //以后的每次移动，以前一个触摸点为控制点、中点为终点，绘制二次贝塞尔曲线
+    else{
+        ctx.quadraticCurveTo(prepointX,prepointY,midpointX,midpointY);
+        ctx.stroke();
+    }
+}
+function pcmouseup(event){
+    //触摸结束时，把movetime计数器清零，移除mousemove事件
+    movetime=0;
+    canvas.removeEventListener('mousemove',pcmousemove);
+}
+
+
+//=============画板尺寸自适应==============
+function getViewPort(){
+    //为不同设备设置宽/高
+    if (isMobile()){
+        document.getElementById('mnist-pad').style.width="100%";
+        document.getElementById('mnist-pad').style.height="100%";
+    }
+    else{
+        document.getElementById('mnist-pad').style.width="40%";
+        document.getElementById('mnist-pad').style.height="90%";
+    }
+    /*总结：js中获得元素宽高的方式：
+            （1）document.getElementById('main').style.width    只能获得内联样式（HTML中）设置的宽/高
+            （2）var el=document.getElementById('main');
+                window.getComputedStyle(el,null).style.width    获得非内联样式（使用嵌入、链入或引入样式表）设置的宽/高
+            （3）document.getElementById('main').offsetWidth    可以获得任何情况下设置的宽/高（包括content、padding 和 border）
+
+            js中设置元素宽高的方式：
+            document.getElementById('main').style.width=
+    */
+    //注意canvas.width与canvas.height这两个属性（canvas的特殊属性），如果不设置的话，与css样式表中设置的宽高不一致，会导致绘制曲线时的放大。
+    canvas.width=canvas.offsetWidth;
+    canvas.height=canvas.offsetHeight;
+}
+
+//==========判断PC端还是移动端=============
+function isMobile() {
+    var userAgentInfo = navigator.userAgent;
+    var Agents = ["Android", "iPhone","SymbianOS", "Windows Phone","iPad", "iPod"];
+    var flag = false;
+    for (var v = 0; v < Agents.length; v++) {
+        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+            flag = true;
+            break;
+        }
+    }
+    return flag;
+}
+
+//=============Image对象缩放==============
 function scaleImageData(imageData, scale) {
     var scaled = tempctx.createImageData(imageData.width * scale, imageData.height * scale);
     for (var row = 0; row < imageData.height; row++) {
