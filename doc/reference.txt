@@ -1,0 +1,10 @@
+Reference websites:
+https://cloud.tencent.com/developer/article/1099614
+https://blog.csdn.net/yanchujian88/article/details/80559936
+https://blog.csdn.net/panrenlong/article/details/81736754
+https://blog.csdn.net/uestc_c2_403/article/details/74156830
+https://blog.csdn.net/xwb0714/article/details/76560294
+
+http://www.tensorfly.cn/tfdoc/get_started/basic_usage.html
+https://tensorflow.google.cn/api_docs/python/tf/image/convert_image_dtype
+https://tensorflow.google.cn/api_docs/python/tf/image/rgb_to_grayscale
